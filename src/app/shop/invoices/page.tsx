@@ -1,6 +1,7 @@
 "use client";
 
 import type React from "react";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import {
@@ -12,6 +13,7 @@ import {
   CheckCircle,
   XCircle,
   Eye,
+  EyeOff,
   Printer,
   ArrowLeft,
   ShoppingBag,
@@ -62,6 +64,13 @@ const statusMap = {
 
 export default function Invoices() {
   // State for invoices
+  const router = useRouter();
+  useEffect(() => {
+    const user = localStorage.getItem("user");
+    if (!user) {
+      router.push("/auth/login");
+    }
+  }, [router]);
 
   const [realInvoices, setRealInvoices] = useState<Invoice[]>([]);
 
@@ -346,20 +355,30 @@ export default function Invoices() {
                             )}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                            <button
-                              onClick={() => {
-                                fetchInvoiceByPaymentId(
-                                  parseInt(payment.payment_id)
-                                );
-                                if (realInvoices.length > 0) {
-                                  viewInvoiceDetails(realInvoices[0]);
-                                }
-                              }}
-                              className="text-dorado-elegante hover:text-oro-claro mr-3"
-                              title="Ver factura"
-                            >
-                              <Eye className="h-5 w-5" />
-                            </button>
+                            {payment.payment_status === "approved" ? (
+                              <button
+                                onClick={() => {
+                                  fetchInvoiceByPaymentId(
+                                    parseInt(payment.payment_id)
+                                  );
+                                  if (realInvoices.length > 0) {
+                                    viewInvoiceDetails(realInvoices[0]);
+                                  }
+                                }}
+                                className="text-dorado-elegante hover:text-oro-claro mr-3"
+                                title="Ver factura"
+                              >
+                                <Eye className="h-5 w-5" />
+                              </button>
+                            ) : (
+                              <button
+                                className="text-gris-medio cursor-not-allowed mr-3"
+                                title="Factura no disponible"
+                              >
+                                <EyeOff className="h-5 w-5" />
+                              </button>
+                            )}
+
                             <a
                               href={`http://localhost:3001${payment.payment_proof_url}`}
                               className="text-azul-noche hover:text-dorado-elegante"
@@ -412,7 +431,7 @@ export default function Invoices() {
                       Print
                     </button>
                     <a
-                      href={selectedInvoice.downloadUrl}
+                      href={`http://localhost:3001/invoices/invoice-${realInvoices[0].paymentId}.pdf`}
                       download
                       className="inline-flex items-center px-3 py-1.5 bg-dorado-elegante hover:bg-oro-claro text-gris-oscuro rounded-md text-sm transition-colors"
                     >

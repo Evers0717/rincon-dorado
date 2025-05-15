@@ -53,7 +53,7 @@ export default function CartSummary() {
     (sum, item) => sum + item.unit_price * item.quantity,
     0
   );
-  const shipping = 9.99;
+  const shipping = 0;
   const total = subtotal + shipping;
 
   const handleDelete = async (bookId: number) => {
@@ -174,10 +174,6 @@ export default function CartSummary() {
           <span className="text-gris-medio">Subtotal</span>
           <span className="font-medium">${subtotal.toFixed(2)}</span>
         </div>
-        <div className="flex justify-between">
-          <span className="text-gris-medio">Shipping</span>
-          <span className="font-medium">${shipping.toFixed(2)}</span>
-        </div>
         <div className="flex justify-between pt-2 border-t border-gris-medio/20">
           <span className="font-semibold text-gris-oscuro">Total</span>
           <span className="font-bold text-vino-profundo">
@@ -194,7 +190,6 @@ export default function CartSummary() {
       </button>
 
       <div className="mt-4 text-center text-xs text-gris-medio">
-        <p>Free shipping on orders over $100</p>
         <p className="mt-1">Secure payment processing</p>
       </div>
     </div>
